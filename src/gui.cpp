@@ -1,4 +1,5 @@
 #include "gui.h"
+#include "generator.h"
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_dx9.h"
@@ -241,6 +242,8 @@ void gui::EndRender() noexcept
 		ResetDevice();
 }
 
+std::string generatedPassword;
+
 void gui::Render() noexcept
 {
 	ImGui::SetNextWindowPos({ 0, 0 });
@@ -264,10 +267,10 @@ void gui::Render() noexcept
 	}
 
 	// Length Box
-	static int value = 32;
+	static int passwordLength = 32;
 	{
 		ImGui::SetCursorPosY(75.f);
-		ImGui::SliderInt(" ", &value, 1, 64);
+		ImGui::SliderInt(" ", &passwordLength, 1, 64);
 		if (ImGui::IsItemHovered())
 			ImGui::SetTooltip("Password length");
 	}
@@ -275,7 +278,18 @@ void gui::Render() noexcept
 	// Generate Button
 	{
 		ImGui::SetCursorPosY(120.f);
-		ImGui::Button("Generate", { 170.f, 20.f });
+		if (ImGui::Button("Generate", { 170.f, 20.f }) && generatedPassword.empty())
+		{
+			// Wenn der Button geklickt wird und das Passwort noch nicht generiert wurde
+			generatedPassword = GenerateRandomPassword(passwordLength); // Passwort generieren
+		}
+
+		if (!generatedPassword.empty())
+		{
+			// Wenn das Passwort generiert wurde, zeige es an
+			ImGui::SetCursorPos({ 15.f, 200.f });
+			ImGui::Text("%s password: %s", passwordName, generatedPassword.c_str());
+		}
 	}
 
 	// Passwords Label
@@ -284,7 +298,7 @@ void gui::Render() noexcept
 		ImGui::Text("Passwords");
 	}
 
-	// Passwords Box
+	// Passwords Box [CHILD]
 	{
 		ImGui::SetCursorPosX(5.f);
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(ImColor(255, 255, 255, 10)));
