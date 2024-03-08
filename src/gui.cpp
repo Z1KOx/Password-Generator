@@ -254,20 +254,43 @@ void gui::Render() noexcept
 		ImGuiWindowFlags_NoMove
 	);
 
+	// Password Box
 	static char passwordName[256] = "";
-	ImGui::SetCursorPosY(30.f);
-	ImGui::Text("Enter name");
-	ImGui::PushItemWidth(170.f);
-	ImGui::InputText("##passwordName", passwordName, IM_ARRAYSIZE(passwordName));
+	{
+		ImGui::SetCursorPos({ 15.f ,30.f });
+		ImGui::Text("Enter name");
+		ImGui::PushItemWidth(170.f);
+		ImGui::InputText("##passwordName", passwordName, IM_ARRAYSIZE(passwordName));
+	}
 
-	static char passwordLength[256] = "";
-	ImGui::SetCursorPos({ 250.f, 30.f});
-	ImGui::Text("Enter length");
-	ImGui::SetCursorPos({ 250.f, 47.f });
-	ImGui::PushItemWidth(85.f);
-	ImGui::InputText("##passwordLength", passwordLength, IM_ARRAYSIZE(passwordLength));
-	if (ImGui::IsItemHovered())
-		ImGui::SetTooltip("MAX 64");
+	// Length Box
+	static int value = 32;
+	{
+		ImGui::SetCursorPosY(75.f);
+		ImGui::SliderInt(" ", &value, 1, 64);
+		if (ImGui::IsItemHovered())
+			ImGui::SetTooltip("Password length");
+	}
 
+	// Generate Button
+	{
+		ImGui::SetCursorPosY(120.f);
+		ImGui::Button("Generate", { 170.f, 20.f });
+	}
+
+	// Passwords Label
+	{
+		ImGui::SetCursorPosY(170.f);
+		ImGui::Text("Passwords");
+	}
+
+	// Passwords Box
+	{
+		ImGui::SetCursorPosX(5.f);
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(ImColor(255, 255, 255, 10)));
+		ImGui::BeginChild("PasswordsBackground", { 490.f, 105.f }, ImGuiChildFlags_Border);
+
+		ImGui::EndChild();
+	}
 	ImGui::End();
 }
