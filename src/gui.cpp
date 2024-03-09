@@ -242,8 +242,6 @@ void gui::EndRender() noexcept
 		ResetDevice();
 }
 
-std::string generatedPassword;
-
 void gui::Render() noexcept
 {
 	ImGui::SetNextWindowPos({ 0, 0 });
@@ -277,18 +275,25 @@ void gui::Render() noexcept
 
 	// Generate Button
 	{
+		static std::string generatedPassword;
+
 		ImGui::SetCursorPosY(120.f);
 		if (ImGui::Button("Generate", { 170.f, 20.f }) && generatedPassword.empty())
-		{
-			// Wenn der Button geklickt wird und das Passwort noch nicht generiert wurde
-			generatedPassword = GenerateRandomPassword(passwordLength); // Passwort generieren
-		}
+			generatedPassword = GenerateRandomPassword(passwordLength);
 
 		if (!generatedPassword.empty())
 		{
-			// Wenn das Passwort generiert wurde, zeige es an
+			ImFont* font = ImGui::GetFont();
+			float defaultFontSize = font->FontSize;
+
 			ImGui::SetCursorPos({ 15.f, 200.f });
-			ImGui::Text("%s password: %s", passwordName, generatedPassword.c_str());
+			ImGui::Text("%s:", passwordName);
+
+			font->FontSize = 15.f;
+			ImGui::SameLine();
+			ImGui::TextColored(ImVec4(ImColor(255, 92, 255, 255)),"%s", generatedPassword.c_str());
+
+			font->FontSize = defaultFontSize;
 		}
 	}
 
