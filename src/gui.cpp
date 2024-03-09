@@ -339,6 +339,7 @@ void gui::Render() noexcept
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(ImColor(255, 255, 255, 10)));
 		ImGui::BeginChild("PasswordsBackground", { 490.f, 105.f }, true, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_AlwaysVerticalScrollbar);
 
+		// For the next idea
 		ImGui::Button(" ", ImVec2(10.f, 8.f));
 		if (ImGui::IsItemHovered())
 			ImGui::SetTooltip("Delete");
