@@ -339,6 +339,15 @@ void gui::Render() noexcept
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(ImColor(255, 255, 255, 10)));
 		ImGui::BeginChild("PasswordsBackground", { 490.f, 105.f }, true, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_AlwaysVerticalScrollbar);
 
+		ImGui::Button(" ", ImVec2(10.f, 8.f));
+		if (ImGui::IsItemHovered())
+			ImGui::SetTooltip("Delete");
+
+		ImGui::SameLine();
+		ImGui::Button(" ", ImVec2(10.f, 8.f));
+		if (ImGui::IsItemHovered())
+			ImGui::SetTooltip("Copy");
+
 		// Show the old generated passwords
 		ImGui::SetCursorPosY(5.f);
 		for (size_t i = 0; i < passwordNames.size(); ++i)
@@ -348,6 +357,7 @@ void gui::Render() noexcept
 			ImFont* font = ImGui::GetFont();
 			float defaultFontSize = font->FontSize;
 
+			ImGui::SetCursorPosX(40.f);
 			ImGui::Text("%s:", passwordNames[i].c_str());
 
 			font->FontSize = 15.f;
