@@ -276,10 +276,15 @@ void gui::Render() noexcept
 	// Generate Button
 	{
 		static std::string generatedPassword;
+		static std::string oldPasswordName;
 
 		ImGui::SetCursorPosY(120.f);
 		if (ImGui::Button("Generate", { 170.f, 20.f }) && generatedPassword.empty())
+		{
 			generatedPassword = GenerateRandomPassword(passwordLength);
+			oldPasswordName = passwordName;
+			passwordName[0] = '\0';
+		}
 
 		if (!generatedPassword.empty())
 		{
@@ -287,11 +292,11 @@ void gui::Render() noexcept
 			float defaultFontSize = font->FontSize;
 
 			ImGui::SetCursorPos({ 15.f, 200.f });
-			ImGui::Text("%s:", passwordName);
+			ImGui::Text("%s:", oldPasswordName.c_str());
 
 			font->FontSize = 15.f;
 			ImGui::SameLine();
-			ImGui::TextColored(ImVec4(ImColor(255, 92, 255, 255)),"%s", generatedPassword.c_str());
+			ImGui::TextColored(ImVec4(ImColor(255, 92, 255, 255)), "%s", generatedPassword.c_str());
 
 			font->FontSize = defaultFontSize;
 		}
