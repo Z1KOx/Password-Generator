@@ -242,6 +242,7 @@ void gui::EndRender() noexcept
 		ResetDevice();
 }
 
+// Render-Funktion
 void gui::Render() noexcept
 {
 	ImGui::SetNextWindowPos({ 0, 0 });
@@ -255,50 +256,75 @@ void gui::Render() noexcept
 		ImGuiWindowFlags_NoMove
 	);
 
+	static std::vector<std::string> passwordNames;
+	static std::vector<int> passwordLengths;
+	static std::vector<std::string> generatedPasswords;
+
 	// Password Box
-	static char passwordName[256] = "";
+	static char inputTextBuffer[256] = "";
 	{
 		ImGui::SetCursorPos({ 15.f ,30.f });
 		ImGui::Text("Enter name");
 		ImGui::PushItemWidth(170.f);
-		ImGui::InputText("##passwordName", passwordName, IM_ARRAYSIZE(passwordName));
+		ImGui::InputText("##passwordName", inputTextBuffer, IM_ARRAYSIZE(inputTextBuffer));
 	}
 
 	// Length Box
 	static int passwordLength = 32;
 	{
 		ImGui::SetCursorPosY(75.f);
-		ImGui::SliderInt(" ", &passwordLength, 1, 64);
+		if (ImGui::SliderInt(" ", &passwordLength, 1, 64))
+		{
+			if (passwordNames.size() > 0)
+			{
+				int lastIndex = passwordNames.size() - 1;
+				int lastPasswordLength = passwordLengths[lastIndex];
+				if (passwordLength != lastPasswordLength)
+				{
+					passwordLengths[lastIndex] = passwordLength;
+				}
+			}
+		}
+
 		if (ImGui::IsItemHovered())
 			ImGui::SetTooltip("Password length");
 	}
 
 	// Generate Button
 	{
-		static std::string generatedPassword;
-		static std::string oldPasswordName;
-
 		ImGui::SetCursorPosY(120.f);
-		if (ImGui::Button("Generate", { 170.f, 20.f }) && generatedPassword.empty())
+		if (ImGui::Button("Generate", { 170.f, 20.f }))
 		{
-			generatedPassword = GenerateRandomPassword(passwordLength);
-			oldPasswordName = passwordName;
-			passwordName[0] = '\0';
-		}
+			auto it = std::find(passwordNames.begin(), passwordNames.end(), inputTextBuffer);
+			if (it == passwordNames.end())
+			{
+				passwordNames.push_back(inputTextBuffer);
+				passwordLengths.push_back(passwordLength);
 
-		if (!generatedPassword.empty())
-		{
-			ImFont* font = ImGui::GetFont();
-			float defaultFontSize = font->FontSize;
+				std::string generatedPassword = GenerateRandomPassword(passwordLength);
+				generatedPasswords.push_back(generatedPassword);
 
-			ImGui::SetCursorPos({ 15.f, 200.f });
-			ImGui::Text("%s:", oldPasswordName.c_str());
+				ImFont* font = ImGui::GetFont();
+				float defaultFontSize = font->FontSize;
 
-			font->FontSize = 15.f;
-			ImGui::SameLine();
-			ImGui::TextColored(ImVec4(ImColor(255, 92, 255, 255)), "%s", generatedPassword.c_str());
+				if (passwordNames.size() == 1)
+					ImGui::SetCursorPos({ 15.f, 200.f });
+				else
+					ImGui::SetCursorPos({ 15.f, 200.f + static_cast<float>(passwordNames.size() - 1) * 20.f });
 
-			font->FontSize = defaultFontSize;
+				int numLines = passwordLength / 2;
+				for (int i = 0; i < numLines; ++i)
+					ImGui::Text(" ");
+
+				ImGui::Text("%s:", inputTextBuffer);
+				font->FontSize = 15.f;
+				ImGui::SameLine();
+				ImGui::TextColored(ImVec4(ImColor(255, 92, 255, 255)), "%s", generatedPassword.c_str());
+				font->FontSize = defaultFontSize;
+
+				std::memset(inputTextBuffer, 0, sizeof(inputTextBuffer));
+				passwordLength = 32;
+			}
 		}
 	}
 
@@ -312,9 +338,28 @@ void gui::Render() noexcept
 	{
 		ImGui::SetCursorPosX(5.f);
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(ImColor(255, 255, 255, 10)));
-		ImGui::BeginChild("PasswordsBackground", { 490.f, 105.f }, ImGuiChildFlags_Border);
+		ImGui::BeginChild("PasswordsBackground", { 490.f, 105.f }, true, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_AlwaysVerticalScrollbar);
+
+		// Show the old generated passwords
+		ImGui::SetCursorPosY(5.f);
+		for (size_t i = 0; i < passwordNames.size(); ++i)
+		{
+			std::string generatedPassword = generatedPasswords[i];
+
+			ImFont* font = ImGui::GetFont();
+			float defaultFontSize = font->FontSize;
+
+			ImGui::Text("%s:", passwordNames[i].c_str());
+
+			font->FontSize = 15.f;
+			ImGui::SameLine();
+			ImGui::TextColored(ImVec4(ImColor(255, 92, 255, 255)), "%s", generatedPassword.c_str());
+
+			font->FontSize = defaultFontSize;
+		}
 
 		ImGui::EndChild();
 	}
+
 	ImGui::End();
 }
