@@ -263,8 +263,8 @@ void gui::Render() noexcept
 	// Password Box
 	static char inputTextBuffer[256] = "";
 	{
-		ImGui::SetCursorPos({ 15.f ,30.f });
-		ImGui::Text("Enter name");
+		ImGui::SetCursorPos({ 9.f ,30.f });
+		ImGui::Text("enter name");
 		ImGui::PushItemWidth(170.f);
 		ImGui::InputText("##passwordName", inputTextBuffer, IM_ARRAYSIZE(inputTextBuffer));
 	}
@@ -293,7 +293,7 @@ void gui::Render() noexcept
 	// Generate Button
 	{
 		ImGui::SetCursorPosY(120.f);
-		if (ImGui::Button("Generate", { 170.f, 20.f }))
+		if (ImGui::Button("generate", { 170.f, 20.f }))
 		{
 			auto it = std::find(passwordNames.begin(), passwordNames.end(), inputTextBuffer);
 			if (it == passwordNames.end())
@@ -329,8 +329,8 @@ void gui::Render() noexcept
 
 	// Passwords Label
 	{
-		ImGui::SetCursorPosY(170.f);
-		ImGui::Text("Passwords");
+		ImGui::SetCursorPos({9.f, 170.f });
+		ImGui::Text("passwords");
 	}
 
 	// Passwords Box [CHILD]
