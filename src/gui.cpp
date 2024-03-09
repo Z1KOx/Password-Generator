@@ -323,7 +323,6 @@ void gui::Render() noexcept
 				font->FontSize = defaultFontSize;
 
 				std::memset(inputTextBuffer, 0, sizeof(inputTextBuffer));
-				passwordLength = 32;
 			}
 		}
 	}
