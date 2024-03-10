@@ -243,29 +243,37 @@ void gui::EndRender() noexcept
 		ResetDevice();
 }
 
+void deleteButtonStyle()
+{
+	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor(117, 32, 32, 255)));
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor(191, 50, 50, 255)));
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor(247, 77, 77, 255)));
+}
+
+void copyButtonStyle()
+{
+	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor(32, 32, 117, 255)));
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor(50, 50, 191, 255)));
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor(77, 77, 247, 255)));
+}
+
 void logicButtons(int index, const std::string& generatedPassword)
 {
 	ImVec2 buttonSize(10.f, 10.f);
 
-	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor(117, 32, 32, 255)));
-	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor(191, 50, 50, 255)));
-	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor(247, 77, 77, 255)));
+	deleteButtonStyle();
 	if (ImGui::Button(("##Delete" + std::to_string(index)).c_str(), buttonSize))
 	{
-
+		// Placeholder for delete logic
 	}
 	if (ImGui::IsItemHovered())
 		ImGui::SetTooltip("Delete");
 
 	ImGui::SameLine();
 
-	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor(32, 32, 117, 255)));
-	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor(50, 50, 191, 255)));
-	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor(77, 77, 247, 255)));
+	copyButtonStyle();
 	if (ImGui::Button(("##Copy" + std::to_string(index)).c_str(), buttonSize))
-	{
 		ImGui::SetClipboardText(generatedPassword.c_str());
-	}
 	if (ImGui::IsItemHovered())
 		ImGui::SetTooltip("Copy");
 
@@ -309,9 +317,7 @@ void gui::Render() noexcept
 				int lastIndex = passwordNames.size() - 1;
 				int lastPasswordLength = passwordLengths[lastIndex];
 				if (passwordLength != lastPasswordLength)
-				{
 					passwordLengths[lastIndex] = passwordLength;
-				}
 			}
 		}
 
@@ -346,7 +352,7 @@ void gui::Render() noexcept
 					ImGui::Text(" ");
 
 				ImGui::Text("%s:", inputTextBuffer);
-				font->FontSize = 15.f;
+				font->FontSize = 15.f; // Make the font size smaller for generatedPassword
 				ImGui::SameLine();
 				ImGui::TextColored(ImVec4(ImColor(255, 92, 255, 255)), "%s", generatedPassword.c_str());
 				font->FontSize = defaultFontSize;
