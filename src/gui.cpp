@@ -218,6 +218,19 @@ void gui::BeginRender() noexcept
 	ImGui::NewFrame();
 }
 
+void RenderButtons(int index)
+{
+	ImGui::Button(" ", ImVec2(10.f, 10.f));
+	if (ImGui::IsItemHovered())
+		ImGui::SetTooltip("Delete");
+
+	ImGui::SameLine();
+
+	ImGui::Button(" ", ImVec2(10.f, 10.f));
+	if (ImGui::IsItemHovered())
+		ImGui::SetTooltip("Copy");
+}
+
 void gui::EndRender() noexcept
 {
 	ImGui::EndFrame();
@@ -242,7 +255,7 @@ void gui::EndRender() noexcept
 		ResetDevice();
 }
 
-// Render-Funktion
+
 void gui::Render() noexcept
 {
 	ImGui::SetNextWindowPos({ 0, 0 });
@@ -308,9 +321,9 @@ void gui::Render() noexcept
 				float defaultFontSize = font->FontSize;
 
 				if (passwordNames.size() == 1)
-					ImGui::SetCursorPos({ 15.f, 200.f });
+					ImGui::SetCursorPos({ 0.f, 200.f });
 				else
-					ImGui::SetCursorPos({ 15.f, 200.f + static_cast<float>(passwordNames.size() - 1) * 20.f });
+					ImGui::SetCursorPos({ 0.f, 200.f + static_cast<float>(passwordNames.size() - 1) * 20.f });
 
 				int numLines = passwordLength / 2;
 				for (int i = 0; i < numLines; ++i)
@@ -339,33 +352,21 @@ void gui::Render() noexcept
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(ImColor(255, 255, 255, 10)));
 		ImGui::BeginChild("PasswordsBackground", { 490.f, 105.f }, true, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_AlwaysVerticalScrollbar);
 
-		// For the next idea
-		ImGui::Button(" ", ImVec2(10.f, 8.f));
-		if (ImGui::IsItemHovered())
-			ImGui::SetTooltip("Delete");
-
-		ImGui::SameLine();
-		ImGui::Button(" ", ImVec2(10.f, 8.f));
-		if (ImGui::IsItemHovered())
-			ImGui::SetTooltip("Copy");
-
-		// Show the old generated passwords
-		ImGui::SetCursorPosY(5.f);
 		for (size_t i = 0; i < passwordNames.size(); ++i)
 		{
-			std::string generatedPassword = generatedPasswords[i];
+			// Render "Delete" and "Copy" buttons
+			RenderButtons(i);
+			ImGui::SameLine();
 
-			ImFont* font = ImGui::GetFont();
-			float defaultFontSize = font->FontSize;
+			float lineHeight = ImGui::GetTextLineHeight();
+			float buttonPosY = ImGui::GetCursorPosY();
 
-			ImGui::SetCursorPosX(40.f);
+			ImGui::SetCursorPosY(buttonPosY - lineHeight / 3);
 			ImGui::Text("%s:", passwordNames[i].c_str());
 
-			font->FontSize = 15.f;
 			ImGui::SameLine();
-			ImGui::TextColored(ImVec4(ImColor(255, 92, 255, 255)), "%s", generatedPassword.c_str());
-
-			font->FontSize = defaultFontSize;
+			ImGui::SetCursorPosY(buttonPosY - lineHeight / 3);
+			ImGui::TextColored(ImVec4(ImColor(255, 92, 255, 255)), "%s", generatedPasswords[i].c_str());
 		}
 
 		ImGui::EndChild();
