@@ -4,6 +4,7 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_dx9.h"
 #include "imgui/imgui_impl_win32.h"
+#include <string>
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(
 	HWND window,
@@ -218,19 +219,6 @@ void gui::BeginRender() noexcept
 	ImGui::NewFrame();
 }
 
-void RenderButtons(int index)
-{
-	ImGui::Button(" ", ImVec2(10.f, 10.f));
-	if (ImGui::IsItemHovered())
-		ImGui::SetTooltip("Delete");
-
-	ImGui::SameLine();
-
-	ImGui::Button(" ", ImVec2(10.f, 10.f));
-	if (ImGui::IsItemHovered())
-		ImGui::SetTooltip("Copy");
-}
-
 void gui::EndRender() noexcept
 {
 	ImGui::EndFrame();
@@ -255,6 +243,34 @@ void gui::EndRender() noexcept
 		ResetDevice();
 }
 
+void logicButtons(int index, const std::string& generatedPassword)
+{
+	ImVec2 buttonSize(10.f, 10.f);
+
+	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor(117, 32, 32, 255)));
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor(191, 50, 50, 255)));
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor(247, 77, 77, 255)));
+	if (ImGui::Button(("##Delete" + std::to_string(index)).c_str(), buttonSize))
+	{
+
+	}
+	if (ImGui::IsItemHovered())
+		ImGui::SetTooltip("Delete");
+
+	ImGui::SameLine();
+
+	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor(32, 32, 117, 255)));
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor(50, 50, 191, 255)));
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor(77, 77, 247, 255)));
+	if (ImGui::Button(("##Copy" + std::to_string(index)).c_str(), buttonSize))
+	{
+		ImGui::SetClipboardText(generatedPassword.c_str());
+	}
+	if (ImGui::IsItemHovered())
+		ImGui::SetTooltip("Copy");
+
+	ImGui::PopStyleColor();
+}
 
 void gui::Render() noexcept
 {
@@ -354,8 +370,7 @@ void gui::Render() noexcept
 
 		for (size_t i = 0; i < passwordNames.size(); ++i)
 		{
-			// Render "Delete" and "Copy" buttons
-			RenderButtons(i);
+			logicButtons(i, generatedPasswords[i]); // Delete, Copy button
 			ImGui::SameLine();
 
 			float lineHeight = ImGui::GetTextLineHeight();
