@@ -181,7 +181,7 @@ void gui::CreateImGui() noexcept
 {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO();
+	ImGuiIO& io = ::ImGui::GetIO();
 
 	io.IniFilename = NULL;
 
