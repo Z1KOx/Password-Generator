@@ -1,4 +1,4 @@
-#include "gui.h"
+﻿#include "gui.h"
 #include "generator.h"
 
 #include "imgui/imgui.h"
@@ -248,7 +248,7 @@ void gui::EndRender() noexcept
 		ResetDevice();
 }
 
-void logicButtons(int index, const std::string& generatedPassword)
+void logicButtons(int index, std::vector<std::string>& generatedPasswords, std::vector<std::string>& passwordNames, std::vector<bool>& deleteButtonClicked)
 {
 	ImVec2 buttonSize(10.f, 10.f);
 
@@ -256,25 +256,39 @@ void logicButtons(int index, const std::string& generatedPassword)
 	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor(191, 50, 50, 255)));
 	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor(247, 77, 77, 255)));
 
-	if (ImGui::Button(("##Delete" + std::to_string(index)).c_str(), buttonSize))
+	if (!deleteButtonClicked[index] && ImGui::Button(("##Delete" + std::to_string(index)).c_str(), buttonSize))
 	{
-		// Placeholder for delete logic
-	}
-	if (ImGui::IsItemHovered())
-		ImGui::SetTooltip("Delete");
+		deleteButtonClicked[index] = true;
 
-	ImGui::SameLine();
+		if (index < generatedPasswords.size())
+		{
+			generatedPasswords.erase(generatedPasswords.begin() + index);
+			passwordNames.erase(passwordNames.begin() + index);
+		}
+	}
+
+	ImGui::PopStyleColor(3);
+
+	if (ImGui::IsItemHovered() && !deleteButtonClicked[index])
+		ImGui::SetTooltip("Delete");
 
 	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor(32, 32, 117, 255)));
 	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor(50, 50, 191, 255)));
 	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor(77, 77, 247, 255)));
 
-	if (ImGui::Button(("##Copy" + std::to_string(index)).c_str(), buttonSize))
-		ImGui::SetClipboardText(generatedPassword.c_str());
-	if (ImGui::IsItemHovered())
-		ImGui::SetTooltip("Copy");
+	if (!deleteButtonClicked[index])
+	{
+		ImGui::SameLine();
 
-	ImGui::PopStyleColor(6);
+		if (ImGui::Button(("##Copy" + std::to_string(index)).c_str(), buttonSize))
+			ImGui::SetClipboardText(generatedPasswords[index].c_str());
+
+
+		if (ImGui::IsItemHovered())
+			ImGui::SetTooltip("Copy");
+	}
+
+	ImGui::PopStyleColor(3);
 }
 
 void gui::Render() noexcept
@@ -302,10 +316,13 @@ void gui::Render() noexcept
 		ImGui::BeginChild("TitleBar", ImVec2(471.f, 20.f));
 		{
 			ImGui::SetCursorPos({ 11.f, 3.f });
-			ImGui::Text("Password Generator                                      0.0.0.7");
+			ImGui::Text("Password Generator");
+
+			ImGui::SameLine();
+			ImGui::SetCursorPosX(410.f);
+			ImGui::Text("0.0.0.8");
+
 			ImGui::PopStyleColor(1);
-
-
 			ImGui::EndChild();
 		}
 	}
@@ -319,13 +336,14 @@ void gui::Render() noexcept
 
 			const ImVec2 gradient_start = ImGui::GetCursorScreenPos();
 			const ImVec2 gradient_end = ImVec2(gradient_start.x + 495.f, gradient_start.y + 1.f);
-			const ImVec4 col_start = ImVec4(ImColor(160, 93, 116, 255)); // Hellrosa
-			const ImVec4 col_end = ImVec4(ImColor(104, 71, 113, 255)); // Dunkles Rosa
+			const ImVec4 col_start = ImVec4(ImColor(160, 93, 116, 255));
+			const ImVec4 col_end = ImVec4(ImColor(104, 71, 113, 255));
 
 			constexpr int num_steps = 100;
 			constexpr float section_width = 495.f / num_steps;
 
-			for (int i = 0; i < num_steps; ++i) {
+			for (int i = 0; i < num_steps; ++i)
+			{
 				const ImVec2 rect_start(gradient_start.x + i * section_width, gradient_start.y);
 				const ImVec2 rect_end(gradient_start.x + (i + 1) * section_width, gradient_end.y);
 
@@ -352,7 +370,7 @@ void gui::Render() noexcept
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor(176, 44, 44, 255)));
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor(209, 79, 79, 255)));
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor(245, 103, 103, 255)));
-		
+
 		// Button style
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 20.0f);
 
@@ -364,35 +382,35 @@ void gui::Render() noexcept
 	}
 
 	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(ImColor(15, 15, 16, 255)));
-	
-	static std::vector<std::string> passwordNames;
+
 	static std::vector<int> passwordLengths;
 	static std::vector<std::string> generatedPasswords;
+	static std::vector<std::string> passwordNames;
 
 	// Password Box
 	static char inputTextBuffer[256] = "";
 	{
-		ImGui::SetCursorPos({ 9.f ,40.f });
+		ImGui::SetCursorPos({ 9.f, 40.f });
 		ImGui::TextColored(ImVec4(ImColor(230, 230, 230, 255)), "enter name");
 
 		// Input box color
 		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(ImColor(21, 21, 23, 255)));
 		ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(ImColor(255, 255, 255, 10)));
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(ImColor(200, 200, 200, 255)));
-		
+
 		// Input box border
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1.f);
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.f);
-		
+
 		ImGui::PushItemWidth(170.f);
 		ImGui::InputText("##passwordName", inputTextBuffer, IM_ARRAYSIZE(inputTextBuffer));
-		
+
 		ImGui::PopStyleVar(2);
 		ImGui::PopStyleColor(3);
 	}
 
 	// Length Box
-	static int passwordLength = 14;
+	static int passwordLength = 32;
 	{
 		// Slider color
 		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(ImColor(21, 21, 23, 255)));
@@ -401,7 +419,7 @@ void gui::Render() noexcept
 		ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(ImColor(255, 255, 255, 10)));
 		ImGui::PushStyleColor(ImGuiCol_SliderGrab, ImVec4(ImColor(162, 102, 169, 255)));
 		ImGui::PushStyleColor(ImGuiCol_SliderGrabActive, ImVec4(ImColor(213, 125, 170, 255)));
-		
+
 		// Slider border
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1.f);
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.f);
@@ -412,7 +430,7 @@ void gui::Render() noexcept
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor(0, 0, 0, 0)));
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor(0, 0, 0, 0)));
 
-		ImGui::SetCursorPos({ 83.f,85.f });
+		ImGui::SetCursorPos({ 87.f,85.f });
 		ImGui::Text("%d", passwordLength);
 
 		ImGui::SetCursorPosY(100.f);
@@ -429,7 +447,7 @@ void gui::Render() noexcept
 
 		// Slider
 		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x * 0.26f);
-		if (ImGui::SliderInt("", &passwordLength, 1, 64, "")) 
+		if (ImGui::SliderInt("", &passwordLength, 1, 64, ""))
 		{
 			// Checking if slider goes out of range
 			if (passwordLength > 64)
@@ -437,7 +455,8 @@ void gui::Render() noexcept
 			else if (passwordLength < 1)
 				passwordLength = 1;
 
-			if (passwordNames.size() > 0) {
+			if (passwordNames.size() > 0)
+			{
 				int lastIndex = passwordNames.size() - 1;
 				int lastPasswordLength = passwordLengths[lastIndex];
 				if (passwordLength != lastPasswordLength)
@@ -463,6 +482,33 @@ void gui::Render() noexcept
 		ImGui::PopStyleColor(10);
 	}
 
+	// Settings list
+	static bool allowLowerCase{ false };
+	static bool allowUpperCase{ false };
+	static bool allowDigits{ false };
+	static bool allowSpecialCharacters{ false };
+	static bool allowSymbols{ false };
+	{
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(ImColor(25, 25, 26, 255)));
+
+		ImGui::SetCursorPos({ 250.f, 40.f });
+		ImGui::Text("settings");
+
+		ImGui::SetCursorPos({ 250.f, 57.f });
+		ImGui::Checkbox("abc", &allowLowerCase);
+
+		ImGui::SetCursorPos({ 320.f, 57.f });
+		ImGui::Checkbox("ABC", &allowUpperCase);
+
+		ImGui::SetCursorPos({ 390.f, 57.f });
+		ImGui::Checkbox("123", &allowDigits);
+
+		ImGui::SetCursorPos({ 250.f, 90.f });
+		ImGui::Checkbox("!@#", &allowSpecialCharacters);
+
+		ImGui::PopStyleColor(1);
+	}
+
 	// Generate Button
 	{
 		// Check if input box is empty
@@ -478,10 +524,10 @@ void gui::Render() noexcept
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1.f);
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.f);
 
-		ImGui::SetCursorPos({ 150.f, 160.f });
+		ImGui::SetCursorPos({ 150.f, 150.f });
 
 		// If input box is not empty
-		if (!isInputEmpty)
+		if (!isInputEmpty && allowLowerCase || allowUpperCase || allowDigits || allowSpecialCharacters)
 		{
 			if (ImGui::Button("generate", { 170.f, 20.f }))
 			{
@@ -491,26 +537,20 @@ void gui::Render() noexcept
 					passwordNames.push_back(inputTextBuffer);
 					passwordLengths.push_back(passwordLength);
 
-					std::string generatedPassword = GenerateRandomPassword(passwordLength);
+					std::string generatedPassword;
+
+					std::string charset;
+					if (allowLowerCase) charset += "abcdefghijklmnopqrstuvwxyz";
+					if (allowUpperCase) charset += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+					if (allowDigits) charset += "0123456789";
+					if (allowSpecialCharacters) charset += "!@#$%^&*()_+-=[]{}|;:,.<>?";
+
+					if (charset.empty()) charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+					generatedPassword = GenerateRandomPassword(passwordLength, charset);
+
+					ImGui::Text("%s: %s", inputTextBuffer, generatedPassword.c_str());
 					generatedPasswords.push_back(generatedPassword);
-
-					ImFont* font = ImGui::GetFont();
-					float defaultFontSize = font->FontSize;
-
-					if (passwordNames.size() == 1)
-						ImGui::SetCursorPos({ 0.f, 200.f });
-					else
-						ImGui::SetCursorPos({ 0.f, 200.f + static_cast<float>(passwordNames.size() - 1) * 20.f });
-
-					int numLines = passwordLength / 2;
-					for (int i = 0; i < numLines; ++i)
-						ImGui::Text(" ");
-
-					ImGui::Text("%s:", inputTextBuffer);
-					font->FontSize = 15.f; // Make the font size smaller for generatedPassword
-					ImGui::SameLine();
-					ImGui::TextColored(ImVec4(255.0f / 255.0f, 92.0f / 255.0f, 255.0f / 255.0f, 1.0f), "%s", generatedPassword.c_str());
-					font->FontSize = defaultFontSize;
 
 					std::memset(inputTextBuffer, 0, sizeof(inputTextBuffer));
 				}
@@ -532,15 +572,7 @@ void gui::Render() noexcept
 	// Console Label
 	{
 		ImGui::SetCursorPos({ 5.f, 160.f });
-
-		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(ImColor(13, 14, 15, 255)));
-		ImGui::BeginChild("Console label background", { 50.f, 20.f });
-		{
-			ImGui::SetCursorPosY(5.f);
-			ImGui::TextColored(ImVec4(ImColor(230, 230, 230, 255)), "Console");
-			ImGui::PopStyleColor(1);
-			ImGui::EndChild();
-		}
+		ImGui::TextColored(ImVec4(ImColor(230, 230, 230, 255)), "Console");
 	}
 
 	// Console Box [CHILD]
@@ -562,9 +594,10 @@ void gui::Render() noexcept
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 20.0f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 20.0);
 
+		std::vector<bool> deleteButtonClicked(passwordNames.size(), false);
 		for (size_t i = 0; i < passwordNames.size(); ++i)
 		{
-			logicButtons(i, generatedPasswords[i]); // Delete, Copy button
+			logicButtons(i, generatedPasswords, passwordNames, deleteButtonClicked); // Delete, Copy button
 			ImGui::SameLine();
 
 			float lineHeight = ImGui::GetTextLineHeight();

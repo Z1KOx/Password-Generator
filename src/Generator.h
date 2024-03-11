@@ -3,17 +3,11 @@
 
 #include <random>
 
-std::string GenerateRandomPassword(int length)
+std::string GenerateRandomPassword(int length, const std::string& charset)
 {
-    static const char charset[] =
-        "0123456789"
-        "abcdefghijklmnopqrstuvwxyz"
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        "!@#$%^&*()_+-=[]{}|;:,.<>?";
-
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<> indexDist(0, sizeof(charset) - 2);
+    std::uniform_int_distribution<> indexDist(0, charset.size() - 1);
 
     std::string password;
     for (int i = 0; i < length; ++i)
@@ -21,4 +15,5 @@ std::string GenerateRandomPassword(int length)
 
     return password;
 }
+
 #endif
