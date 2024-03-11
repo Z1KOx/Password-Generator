@@ -285,7 +285,7 @@ void gui::Render() noexcept
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 
 	ImGui::Begin(
-		"Password Generator 0.0.0.4",
+		"Password Generator Window",
 		&isRunning,
 		ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_NoSavedSettings |
@@ -294,29 +294,75 @@ void gui::Render() noexcept
 		ImGuiWindowFlags_NoDecoration
 	);
 
-	ImGui::SetCursorPos({ 0.f, 5.f });
-
-	ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(ImColor(28, 28, 29, 255)));
-	ImGui::BeginChild("TitleBar", ImVec2(495.f, 20.f));
+	// Title bar
 	{
-		ImGui::SetCursorPos({ 11.f, 3.f });
-		ImGui::Text("Password Generator                                         0.0.0.6");
-		ImGui::PopStyleColor(1);
+		ImGui::SetCursorPos({ 0.f, 5.f });
 
-		
-		ImGui::SetCursorPos(ImVec2(0.f, 19.f));
-
-		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(ImColor(136, 86, 119, 255)));
-		ImGui::BeginChild(" ", ImVec2(495.f, 1.f), false, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoInputs);
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(ImColor(28, 28, 29, 255)));
+		ImGui::BeginChild("TitleBar", ImVec2(471.f, 20.f));
 		{
+			ImGui::SetCursorPos({ 11.f, 3.f });
+			ImGui::Text("Password Generator                                      0.0.0.7");
 			ImGui::PopStyleColor(1);
+
+
 			ImGui::EndChild();
 		}
-		
-		ImGui::EndChild();
 	}
 
-	ImGui::PopStyleVar(1);
+	// Title bar line
+	{
+		ImGui::SetCursorPos({ 0.f, 25.f });
+		ImGui::BeginChild("TitleBar_Line", ImVec2(471.f, 1.f), false, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoInputs);
+		{
+			ImDrawList* draw = ImGui::GetWindowDrawList();
+
+			const ImVec2 gradient_start = ImGui::GetCursorScreenPos();
+			const ImVec2 gradient_end = ImVec2(gradient_start.x + 495.f, gradient_start.y + 1.f);
+			const ImVec4 col_start = ImVec4(ImColor(160, 93, 116, 255)); // Hellrosa
+			const ImVec4 col_end = ImVec4(ImColor(104, 71, 113, 255)); // Dunkles Rosa
+
+			constexpr int num_steps = 100;
+			constexpr float section_width = 495.f / num_steps;
+
+			for (int i = 0; i < num_steps; ++i) {
+				const ImVec2 rect_start(gradient_start.x + i * section_width, gradient_start.y);
+				const ImVec2 rect_end(gradient_start.x + (i + 1) * section_width, gradient_end.y);
+
+				const float t = static_cast<float>(i) / num_steps;
+				const ImVec4 col = ImVec4(
+					col_start.x + (col_end.x - col_start.x) * t,
+					col_start.y + (col_end.y - col_start.y) * t,
+					col_start.z + (col_end.z - col_start.z) * t,
+					col_start.w + (col_end.w - col_start.w) * t
+				);
+
+				draw->AddRectFilled(rect_start, rect_end, ImGui::ColorConvertFloat4ToU32(col));
+			}
+
+			ImGui::EndChild();
+		}
+	}
+
+	// Exit button
+	{
+		ImGui::SetCursorPos(ImVec2(480.f, 10.f));
+
+		// Button color
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor(176, 44, 44, 255)));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor(209, 79, 79, 255)));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor(245, 103, 103, 255)));
+		
+		// Button style
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 20.0f);
+
+		if (ImGui::Button(" ", ImVec2(10.f, 10.f)))
+			PostQuitMessage(0);
+
+		ImGui::PopStyleVar(1);
+		ImGui::PopStyleColor(3);
+	}
+
 	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(ImColor(15, 15, 16, 255)));
 	
 	static std::vector<std::string> passwordNames;
