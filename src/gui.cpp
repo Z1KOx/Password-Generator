@@ -243,25 +243,14 @@ void gui::EndRender() noexcept
 		ResetDevice();
 }
 
-void deleteButtonStyle()
-{
-	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor(117, 32, 32, 255)));
-	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor(191, 50, 50, 255)));
-	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor(247, 77, 77, 255)));
-}
-
-void copyButtonStyle()
-{
-	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor(32, 32, 117, 255)));
-	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor(50, 50, 191, 255)));
-	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor(77, 77, 247, 255)));
-}
-
 void logicButtons(int index, const std::string& generatedPassword)
 {
 	ImVec2 buttonSize(10.f, 10.f);
 
-	deleteButtonStyle();
+	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor(117, 32, 32, 255)));
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor(191, 50, 50, 255)));
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor(247, 77, 77, 255)));
+
 	if (ImGui::Button(("##Delete" + std::to_string(index)).c_str(), buttonSize))
 	{
 		// Placeholder for delete logic
@@ -271,13 +260,16 @@ void logicButtons(int index, const std::string& generatedPassword)
 
 	ImGui::SameLine();
 
-	copyButtonStyle();
+	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor(32, 32, 117, 255)));
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor(50, 50, 191, 255)));
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor(77, 77, 247, 255)));
+
 	if (ImGui::Button(("##Copy" + std::to_string(index)).c_str(), buttonSize))
 		ImGui::SetClipboardText(generatedPassword.c_str());
 	if (ImGui::IsItemHovered())
 		ImGui::SetTooltip("Copy");
 
-	ImGui::PopStyleColor();
+	ImGui::PopStyleColor(6);
 }
 
 void gui::Render() noexcept
@@ -285,7 +277,7 @@ void gui::Render() noexcept
 	ImGui::SetNextWindowPos({ 0, 0 });
 	ImGui::SetNextWindowSize({ WIDTH, HEIGHT });
 	ImGui::Begin(
-		"Password Generator                                         0.0.0.1",
+		"Password Generator                                         0.0.0.2",
 		&isRunning,
 		ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_NoSavedSettings |
@@ -322,7 +314,7 @@ void gui::Render() noexcept
 	}
 
 	// Length Box
-	static int passwordLength = 1;
+	static int passwordLength = 14;
 	{
 		// Slider color
 		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(ImColor(21, 21, 23, 255)));
@@ -383,6 +375,16 @@ void gui::Render() noexcept
 
 	// Generate Button
 	{
+		// Button color
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor(21, 21, 23, 255)));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor(39, 39, 43, 255)));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor(46, 46, 55, 255)));
+		ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(ImColor(255, 255, 255, 10)));
+
+		// Button border
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1.f);
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.f);
+
 		ImGui::SetCursorPos({150.f, 160.f});
 		if (ImGui::Button("generate", { 170.f, 20.f }))
 		{
@@ -416,6 +418,9 @@ void gui::Render() noexcept
 				std::memset(inputTextBuffer, 0, sizeof(inputTextBuffer));
 			}
 		}
+
+		ImGui::PopStyleVar(2);
+		ImGui::PopStyleColor(4);
 	}
 
 	// Console Label
@@ -452,8 +457,11 @@ void gui::Render() noexcept
 		}
 
 		ImGui::PopStyleVar(2);
+		ImGui::PopStyleColor(2);
 		ImGui::EndChild();
 	}
 
+	ImGui::PopStyleVar();
+	ImGui::PopStyleColor();
 	ImGui::End();
 }
