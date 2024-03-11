@@ -181,7 +181,7 @@ void gui::CreateImGui() noexcept
 {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
-	ImGuiIO& io = ::ImGui::GetIO();
+	ImGuiIO& io = ImGui::GetIO();
 
 	io.IniFilename = NULL;
 
@@ -276,17 +276,44 @@ void gui::Render() noexcept
 {
 	ImGui::SetNextWindowPos({ 0, 0 });
 	ImGui::SetNextWindowSize({ WIDTH, HEIGHT });
+
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+
 	ImGui::Begin(
-		"Password Generator                                         0.0.0.4",
+		"Password Generator 0.0.0.4",
 		&isRunning,
 		ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_NoSavedSettings |
 		ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoMove
+		ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoDecoration
 	);
 
-	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(ImColor(15, 15, 16, 255)));
+	ImGui::SetCursorPos({ 0.f, 5.f });
 
+	ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(ImColor(28, 28, 29, 255)));
+	ImGui::BeginChild("TitleBar", ImVec2(495.f, 20.f));
+	{
+		ImGui::SetCursorPos({ 11.f, 3.f });
+		ImGui::Text("Password Generator                                         0.0.0.5");
+		ImGui::PopStyleColor(1);
+
+		
+		ImGui::SetCursorPos(ImVec2(0.f, 19.f));
+
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(ImColor(136, 86, 119, 255)));
+		ImGui::BeginChild(" ", ImVec2(495.f, 1.f), false, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoInputs);
+		{
+			ImGui::PopStyleColor(1);
+			ImGui::EndChild();
+		}
+		
+		ImGui::EndChild();
+	}
+
+	ImGui::PopStyleVar(1);
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(ImColor(15, 15, 16, 255)));
+	
 	static std::vector<std::string> passwordNames;
 	static std::vector<int> passwordLengths;
 	static std::vector<std::string> generatedPasswords;
@@ -294,7 +321,7 @@ void gui::Render() noexcept
 	// Password Box
 	static char inputTextBuffer[256] = "";
 	{
-		ImGui::SetCursorPos({ 9.f ,30.f });
+		ImGui::SetCursorPos({ 9.f ,40.f });
 		ImGui::TextColored(ImVec4(ImColor(230, 230, 230, 255)), "enter name");
 
 		// Input box color
@@ -334,7 +361,7 @@ void gui::Render() noexcept
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor(0, 0, 0, 0)));
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor(0, 0, 0, 0)));
 
-		ImGui::SetCursorPosY(75.f);
+		ImGui::SetCursorPosY(85.f);
 
 		// "-" Button
 		if (ImGui::Button("-", ImVec2(20, 20)))
