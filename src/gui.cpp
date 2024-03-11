@@ -185,6 +185,11 @@ void gui::CreateImGui() noexcept
 
 	io.IniFilename = NULL;
 
+	ImGuiStyle& style = ImGui::GetStyle();
+	style.GrabRounding = 5.f;
+	style.GrabMinSize = 8.f;
+	style.ScrollbarSize = 10.f;
+
 	ImGui::StyleColorsDark();
 
 	ImGui_ImplWin32_Init(window);
@@ -295,7 +300,7 @@ void gui::Render() noexcept
 	ImGui::BeginChild("TitleBar", ImVec2(495.f, 20.f));
 	{
 		ImGui::SetCursorPos({ 11.f, 3.f });
-		ImGui::Text("Password Generator                                         0.0.0.5");
+		ImGui::Text("Password Generator                                         0.0.0.6");
 		ImGui::PopStyleColor(1);
 
 		
@@ -361,7 +366,10 @@ void gui::Render() noexcept
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor(0, 0, 0, 0)));
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor(0, 0, 0, 0)));
 
-		ImGui::SetCursorPosY(85.f);
+		ImGui::SetCursorPos({ 83.f,85.f });
+		ImGui::Text("%d", passwordLength);
+
+		ImGui::SetCursorPosY(100.f);
 
 		// "-" Button
 		if (ImGui::Button("-", ImVec2(20, 20)))
@@ -369,25 +377,34 @@ void gui::Render() noexcept
 			if (passwordLength > 1)
 				passwordLength--;
 		}
-		ImGui::SameLine();
 
+		ImGui::SameLine();
 		ImGui::SetNextItemWidth(110.f);
+
 		// Slider
-		if (ImGui::SliderInt(" ", &passwordLength, 1, 64))
+		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x * 0.26f);
+		if (ImGui::SliderInt("", &passwordLength, 1, 64, "")) 
 		{
-			if (passwordNames.size() > 0)
-			{
+			// Checking if slider goes out of range
+			if (passwordLength > 64)
+				passwordLength = 64;
+			else if (passwordLength < 1)
+				passwordLength = 1;
+
+			if (passwordNames.size() > 0) {
 				int lastIndex = passwordNames.size() - 1;
 				int lastPasswordLength = passwordLengths[lastIndex];
 				if (passwordLength != lastPasswordLength)
 					passwordLengths[lastIndex] = passwordLength;
 			}
 		}
+		ImGui::PopItemWidth();
+
 
 		if (ImGui::IsItemHovered())
 			ImGui::SetTooltip("Password length");
 
-		ImGui::SameLine(0.f, 0.f);
+		ImGui::SameLine();
 
 		// "+" Button
 		if (ImGui::Button("+", ImVec2(20, 20)))
@@ -487,7 +504,7 @@ void gui::Render() noexcept
 		ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(ImColor(14, 14, 15, 255)));
 
 		// Scrollbar color
-		ImGui::PushStyleColor(ImGuiCol_ScrollbarBg, ImVec4(ImColor(15, 15, 16, 255)));
+		ImGui::PushStyleColor(ImGuiCol_ScrollbarBg, ImVec4(ImColor(13, 14, 15, 255)));
 		ImGui::PushStyleColor(ImGuiCol_ScrollbarGrab, ImVec4(ImColor(157, 100, 138, 255)));
 		ImGui::PushStyleColor(ImGuiCol_ScrollbarGrabHovered, ImVec4(ImColor(181, 114, 159, 255)));
 		ImGui::PushStyleColor(ImGuiCol_ScrollbarGrabActive, ImVec4(ImColor(196, 124, 172, 255)));
