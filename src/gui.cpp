@@ -527,7 +527,7 @@ void gui::Render() noexcept
 		ImGui::SetCursorPos({ 150.f, 150.f });
 
 		// If input box is not empty
-		if (!isInputEmpty && allowLowerCase || allowUpperCase || allowDigits || allowSpecialCharacters)
+		if ((!isInputEmpty && allowLowerCase) || (!isInputEmpty && allowUpperCase) || (!isInputEmpty && allowDigits) || (!isInputEmpty && allowSpecialCharacters))
 		{
 			if (ImGui::Button("generate", { 170.f, 20.f }))
 			{
