@@ -320,7 +320,7 @@ void gui::Render() noexcept
 
 			ImGui::SameLine();
 			ImGui::SetCursorPosX(410.f);
-			ImGui::Text("0.0.0.8");
+			ImGui::Text("0.0.0.9");
 
 			ImGui::PopStyleColor(1);
 			ImGui::EndChild();
