@@ -338,6 +338,7 @@ void gui::Render() noexcept
 <<<<<<< HEAD
 			ImGui::Text("0.0.1.0");
 =======
+			ImGui::Text("0.0.0.9");
 >>>>>>> 1919212e118a63ec2d6a132d0488897cb50bc349
 
 			ImGui::PopStyleColor(1);
