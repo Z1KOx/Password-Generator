@@ -269,8 +269,17 @@ void logicButtons(int index, std::vector<std::string>& generatedPasswords, std::
 
 	ImGui::PopStyleColor(3);
 
+	// For Tooltip [Delete] [Copy]
+	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 20.f);
+
+	// Tooltip Delete
+	ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(ImColor(200, 70, 70, 255)));
+	ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(ImColor(200, 70, 70, 100)));
+
 	if (ImGui::IsItemHovered() && !deleteButtonClicked[index])
 		ImGui::SetTooltip("Delete");
+
+	ImGui::PopStyleColor(2);
 
 	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor(32, 32, 117, 255)));
 	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor(50, 50, 191, 255)));
@@ -283,9 +292,15 @@ void logicButtons(int index, std::vector<std::string>& generatedPasswords, std::
 		if (ImGui::Button(("##Copy" + std::to_string(index)).c_str(), buttonSize))
 			ImGui::SetClipboardText(generatedPasswords[index].c_str());
 
+		// Tooltip Copy
+		ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(ImColor(70, 70, 200, 255)));
+		ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(ImColor(70, 70, 200, 100)));
 
 		if (ImGui::IsItemHovered())
 			ImGui::SetTooltip("Copy");
+
+		ImGui::PopStyleColor(2);
+		ImGui::PopStyleVar(1);
 	}
 
 	ImGui::PopStyleColor(3);
@@ -320,7 +335,7 @@ void gui::Render() noexcept
 
 			ImGui::SameLine();
 			ImGui::SetCursorPosX(410.f);
-			ImGui::Text("0.0.0.8");
+			ImGui::Text("0.0.1.0");
 
 			ImGui::PopStyleColor(1);
 			ImGui::EndChild();
@@ -446,10 +461,14 @@ void gui::Render() noexcept
 		ImGui::SetNextItemWidth(110.f);
 
 		// Slider
+		ImGuiStyle& style = ImGui::GetStyle();
+		style.FrameBorderSize = 1.0f; // Beispielwert für eine dünnere Rahmenstärke
+
+		// Zeichne den Slider
 		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x * 0.26f);
 		if (ImGui::SliderInt("", &passwordLength, 1, 64, ""))
 		{
-			// Checking if slider goes out of range
+			// Überprüfe, ob der Slider den Bereich verlässt
 			if (passwordLength > 64)
 				passwordLength = 64;
 			else if (passwordLength < 1)
@@ -465,10 +484,18 @@ void gui::Render() noexcept
 		}
 		ImGui::PopItemWidth();
 
+		// For Tooltip
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 20.f);
+
+		// Tooltip color
+		ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(ImColor(46, 46, 46, 255)));
+		ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(ImColor(27, 27, 28, 255)));
 
 		if (ImGui::IsItemHovered())
 			ImGui::SetTooltip("Password length");
 
+		ImGui::PopStyleVar(1);
+		ImGui::PopStyleColor(2);
 		ImGui::SameLine();
 
 		// "+" Button
@@ -571,15 +598,15 @@ void gui::Render() noexcept
 
 	// Console Label
 	{
-		ImGui::SetCursorPos({ 5.f, 160.f });
-		ImGui::TextColored(ImVec4(ImColor(230, 230, 230, 255)), "Console");
+		ImGui::SetCursorPos({ 10.f, 165.f });
+		ImGui::TextColored(ImVec4(ImColor(192, 192, 193, 255)), "Console");
 	}
 
 	// Console Box [CHILD]
 	{
 		// Box color
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(ImColor(13, 14, 15, 255)));
-		ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(ImColor(14, 14, 15, 255)));
+		ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(ImColor(29, 29, 29, 255)));
 
 		// Scrollbar color
 		ImGui::PushStyleColor(ImGuiCol_ScrollbarBg, ImVec4(ImColor(13, 14, 15, 255)));
