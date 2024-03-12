@@ -274,7 +274,7 @@ void logicButtons(int index, std::vector<std::string>& generatedPasswords, std::
 
 	// Tooltip Delete
 	ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(ImColor(200, 70, 70, 255)));
-	ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(ImColor(200, 70, 70, 100)));
+	ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(ImColor(86, 36, 37, 255)));
 
 	if (ImGui::IsItemHovered() && !deleteButtonClicked[index])
 		ImGui::SetTooltip("Delete");
@@ -294,7 +294,7 @@ void logicButtons(int index, std::vector<std::string>& generatedPasswords, std::
 
 		// Tooltip Copy
 		ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(ImColor(70, 70, 200, 255)));
-		ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(ImColor(70, 70, 200, 100)));
+		ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(ImColor(21, 25, 66, 255)));
 
 		if (ImGui::IsItemHovered())
 			ImGui::SetTooltip("Copy");
