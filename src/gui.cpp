@@ -335,7 +335,7 @@ void gui::Render() noexcept
 
 			ImGui::SameLine();
 			ImGui::SetCursorPosX(410.f);
-			ImGui::Text("0.0.1.0");
+			ImGui::Text("1.1.1.1");
 
 			ImGui::PopStyleColor(1);
 			ImGui::EndChild();
