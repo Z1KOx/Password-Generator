@@ -462,13 +462,12 @@ void gui::Render() noexcept
 
 		// Slider
 		ImGuiStyle& style = ImGui::GetStyle();
-		style.FrameBorderSize = 1.0f; // Beispielwert für eine dünnere Rahmenstärke
+		style.FrameBorderSize = 1.0f;
 
-		// Zeichne den Slider
+		// Slider
 		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x * 0.26f);
 		if (ImGui::SliderInt("", &passwordLength, 1, 64, ""))
 		{
-			// Überprüfe, ob der Slider den Bereich verlässt
 			if (passwordLength > 64)
 				passwordLength = 64;
 			else if (passwordLength < 1)
