@@ -335,7 +335,7 @@ void gui::Render() noexcept
 
 			ImGui::SameLine();
 			ImGui::SetCursorPosX(410.f);
-			ImGui::Text("1.1.1.1");
+			ImGui::Text("1.1.1.2");
 
 			ImGui::PopStyleColor(1);
 			ImGui::EndChild();
@@ -451,13 +451,13 @@ void gui::Render() noexcept
 		ImGui::SetCursorPosY(100.f);
 
 		// "-" Button
-		if (ImGui::Button("-", ImVec2(20, 20)))
-		{
-			if (passwordLength > 1)
+		if (passwordLength > 1) {
+			if (ImGui::Button("-", ImVec2(20, 20))) {
 				passwordLength--;
+			}
 		}
 
-		ImGui::SameLine();
+		ImGui::SetCursorPos({ 36.f,100.f });
 		ImGui::SetNextItemWidth(110.f);
 
 		// Slider
@@ -466,19 +466,20 @@ void gui::Render() noexcept
 
 		// Slider
 		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x * 0.26f);
-		if (ImGui::SliderInt("", &passwordLength, 1, 64, ""))
-		{
-			if (passwordLength > 64)
+		if (ImGui::SliderInt("", &passwordLength, 1, 64, "")) {
+			if (passwordLength > 64) {
 				passwordLength = 64;
-			else if (passwordLength < 1)
+			}
+			else if (passwordLength < 1) {
 				passwordLength = 1;
+			}
 
-			if (passwordNames.size() > 0)
-			{
+			if (passwordNames.size() > 0) {
 				int lastIndex = passwordNames.size() - 1;
 				int lastPasswordLength = passwordLengths[lastIndex];
-				if (passwordLength != lastPasswordLength)
+				if (passwordLength != lastPasswordLength) {
 					passwordLengths[lastIndex] = passwordLength;
+				}
 			}
 		}
 		ImGui::PopItemWidth();
@@ -490,18 +491,19 @@ void gui::Render() noexcept
 		ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(ImColor(46, 46, 46, 255)));
 		ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(ImColor(27, 27, 28, 255)));
 
-		if (ImGui::IsItemHovered())
+		if (ImGui::IsItemHovered()) {
 			ImGui::SetTooltip("Password length");
+		}
 
 		ImGui::PopStyleVar(1);
 		ImGui::PopStyleColor(2);
-		ImGui::SameLine();
+		ImGui::SetCursorPos({ 165.f,100.f });
 
 		// "+" Button
-		if (ImGui::Button("+", ImVec2(20, 20)))
-		{
-			if (passwordLength < 64)
+		if (passwordLength < 64) {
+			if (ImGui::Button("+", ImVec2(20, 20))) {
 				passwordLength++;
+			}
 		}
 
 		ImGui::PopStyleVar(2);
